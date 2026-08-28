@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#111827">
+<title>Orla Almox Digital</title>
+<style>
+:root{--bg:#f4f6f8;--card:#fff;--text:#111827;--muted:#667085;--line:#e5e7eb;--accent:#e85d04;--ok:#16a34a;--dark:#111827}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;background:var(--bg);color:var(--text)}
+header{position:sticky;top:0;z-index:10;background:var(--dark);color:#fff;padding:17px 15px}
+.brand{max-width:850px;margin:auto;display:flex;align-items:center;gap:11px}
+.logo{width:46px;height:46px;border-radius:13px;background:var(--accent);display:grid;place-items:center;font-weight:900}
+h1{margin:0;font-size:20px}.sub{font-size:12px;opacity:.75;margin-top:2px}
+main{max-width:850px;margin:auto;padding:14px}
+.hero,.card{border-radius:16px;margin-bottom:13px}
+.hero{background:linear-gradient(135deg,#111827,#374151);color:#fff;padding:17px}
+.hero h2{margin:0 0 6px;font-size:21px}.hero p{margin:0;font-size:13px;opacity:.82}
+.card{background:var(--card);border:1px solid var(--line);padding:15px}
+h3{font-size:17px;margin:0 0 11px}
+label{display:block;font-size:13px;font-weight:800;margin:10px 0 5px}
+input,select,textarea{width:100%;padding:12px;border:1px solid #d1d5db;border-radius:10px;background:#fff;font-size:16px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.search{margin-bottom:10px}
+.cats{display:flex;gap:7px;overflow:auto;padding-bottom:5px;margin-bottom:10px}
+.cat{white-space:nowrap;border:1px solid #d1d5db;background:#fff;padding:10px 13px;border-radius:999px;font-weight:800}
+.cat.active{background:#111827;color:#fff;border-color:#111827}
+.prod{border:1px solid var(--line);border-radius:13px;padding:11px;margin-bottom:9px}
+.code{font-size:11px;color:var(--muted);font-weight:800}.name{font-weight:850;margin:4px 0}.unit{font-size:12px;color:var(--muted)}
+.qty{display:grid;grid-template-columns:46px 1fr 46px;gap:8px;align-items:center;margin-top:9px}
+.qty button{height:44px;border-radius:10px;border:1px solid #d1d5db;font-size:21px;font-weight:900;background:#f9fafb}
+.qty .plus{background:var(--accent);border-color:var(--accent);color:white}.qn{text-align:center;font-weight:900}
+.cartline{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid var(--line)}
+.cartline:last-child{border-bottom:0}
+.muted{font-size:13px;color:var(--muted)}
+.notice{font-size:13px;background:#fff7ed;border-left:4px solid var(--accent);padding:10px;border-radius:8px;margin-top:10px}
+.send{width:100%;border:0;border-radius:12px;background:var(--ok);color:#fff;padding:15px;font-size:16px;font-weight:900;margin-top:12px}
+.send:active{transform:scale(.99)}
+@media(max-width:650px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header>
+ <div class="brand"><div class="logo">OB</div><div><h1>ORLA ALMOX DIGITAL</h1><div class="sub">Orla da Barra • Solicitação antecipada de materiais</div></div></div>
+</header>
+
+<main>
+<section class="hero">
+ <h2>Solicite antes de ir ao almoxarifado</h2>
+ <p>Escolha os materiais, informe a quantidade e envie o pedido para o Célio. O almoxarifado separa antes da retirada.</p>
+</section>
+
+<section class="card">
+<h3>1. Dados da solicitação</h3>
+<div class="grid">
+ <div><label>Nome do solicitante</label><input id="nome" placeholder="Ex.: João da Silva"></div>
+ <div><label>Equipe</label><select id="equipe"><option value="">Selecione</option><option>Hidráulica</option><option>Elétrica</option><option>Carpintaria</option><option>Estrutura</option><option>Acabamento</option><option>Segurança</option><option>Outro</option></select></div>
+</div>
+<div class="grid">
+ <div><label>Local de uso</label><input id="local" placeholder="Ex.: Torre 1 - 4º pavimento"></div>
+ <div><label>Quando precisa?</label><select id="quando"><option>Agora</option><option>30 minutos</option><option>1 hora</option><option>Próximo período</option><option>Amanhã cedo</option></select></div>
+</div>
+</section>
+
+<section class="card">
+<h3>2. Escolha os materiais</h3>
+<input id="busca" class="search" placeholder="Pesquisar por nome ou código">
+<div id="cats" class="cats"></div>
+<div id="lista"></div>
+</section>
+
+<section class="card">
+<h3>3. Confira o pedido</h3>
+<div id="resumo" class="muted">Nenhum material selecionado.</div>
+<label>Observação</label><textarea id="obs" rows="2" placeholder="Opcional"></textarea>
+<div class="notice"><b>Destino:</b> Célio — Almoxarifado.<br>O WhatsApp abrirá com o pedido preenchido. O colaborador só toca em <b>Enviar</b>.</div>
+<button id="enviar" class="send" type="button">ENVIAR PEDIDO PARA O ALMOXARIFADO</button>
+</section>
+</main>
+
+<script>
+const PHONE="5541996606160";
+const M=[
+{id:1,c:"Hidráulica",cod:"HID-001",n:"Joelho 90° soldável 25 mm",u:"UN"},
+{id:2,c:"Hidráulica",cod:"HID-002",n:"Luva soldável 25 mm",u:"UN"},
+{id:3,c:"Hidráulica",cod:"HID-003",n:"Tê soldável 25 mm",u:"UN"},
+{id:4,c:"Hidráulica",cod:"HID-004",n:"Registro soldável 50 mm",u:"UN"},
+{id:5,c:"Hidráulica",cod:"HID-005",n:"Tubo PVC soldável 25 mm",u:"BR"},
+{id:6,c:"Elétrica",cod:"ELE-001",n:"Caixa 4x2",u:"UN"},
+{id:7,c:"Elétrica",cod:"ELE-002",n:"Caixa de teto",u:"UN"},
+{id:8,c:"Elétrica",cod:"ELE-003",n:"Eletroduto 25 mm",u:"BR"},
+{id:9,c:"Elétrica",cod:"ELE-004",n:"Cabo 2,5 mm²",u:"M"},
+{id:10,c:"Elétrica",cod:"ELE-005",n:"Cabo 4 mm²",u:"M"},
+{id:11,c:"Elétrica",cod:"ELE-006",n:"Disjuntor 20 A",u:"UN"},
+{id:12,c:"EPI",cod:"EPI-001",n:"Protetor auricular",u:"UN"},
+{id:13,c:"EPI",cod:"EPI-002",n:"Óculos de proteção",u:"UN"},
+{id:14,c:"Ferramentas",cod:"FER-001",n:"Martelo de carpinteiro",u:"UN"},
+{id:15,c:"Ferramentas",cod:"FER-002",n:"Colher de pedreiro 9 polegadas",u:"UN"},
+{id:16,c:"Ferramentas",cod:"FER-003",n:"Desempenadeira de aço lisa",u:"UN"},
+{id:17,c:"Fixação",cod:"FIX-001",n:"Arame recozido",u:"KG"},
+{id:18,c:"Fixação",cod:"FIX-002",n:"Espaçador",u:"UN"}
+];
+const qtd={};
+let categoria="Hidráulica";
+const $=id=>document.getElementById(id);
+const categorias=[...new Set(M.map(m=>m.c))];
+
+function renderCats(){
+ $("cats").innerHTML="";
+ categorias.forEach(c=>{
+   const b=document.createElement("button");
+   b.type="button"; b.className="cat"+(c===categoria?" active":""); b.textContent=c;
+   b.onclick=()=>{categoria=c;renderCats();renderLista()};
+   $("cats").appendChild(b);
+ });
+}
+function renderLista(){
+ const s=$("busca").value.trim().toLowerCase();
+ const data=M.filter(m=>s ? (m.n+" "+m.cod+" "+m.c).toLowerCase().includes(s) : m.c===categoria);
+ $("lista").innerHTML="";
+ data.forEach(m=>{
+   const d=document.createElement("div"); d.className="prod";
+   d.innerHTML=`<div class="code">${m.cod}</div><div class="name">${m.n}</div><div class="unit">Unidade: ${m.u}</div>
+   <div class="qty"><button type="button" class="menos">−</button><div class="qn">${qtd[m.id]||0}</div><button type="button" class="plus">+</button></div>`;
+   d.querySelector(".mais");
+   d.querySelector(".menos").onclick=()=>alterar(m,-1);
+   d.querySelector(".plus").onclick=()=>alterar(m,1);
+   $("lista").appendChild(d);
+ });
+}
+function alterar(m,d){
+ qtd[m.id]=Math.max(0,(qtd[m.id]||0)+d);
+ if(qtd[m.id]===0) delete qtd[m.id];
+ renderLista(); renderResumo();
+}
+function renderResumo(){
+ const ids=Object.keys(qtd);
+ if(!ids.length){$("resumo").innerHTML="Nenhum material selecionado.";return}
+ $("resumo").innerHTML=ids.map(id=>{
+   const m=M.find(x=>x.id==id);
+   return `<div class="cartline"><div><b>${m.n}</b><div class="code">${m.cod}</div></div><b>${qtd[id]} ${m.u}</b></div>`;
+ }).join("");
+}
+function enviar(){
+ const nome=$("nome").value.trim(), equipe=$("equipe").value, local=$("local").value.trim(), ids=Object.keys(qtd);
+ if(!nome){alert("Informe o nome do solicitante.");return}
+ if(!equipe){alert("Selecione a equipe.");return}
+ if(!local){alert("Informe o local de uso.");return}
+ if(!ids.length){alert("Selecione pelo menos um material.");return}
+ const linhas=[
+   "*ORLA ALMOX DIGITAL — NOVA SOLICITAÇÃO*",
+   "Obra: Orla da Barra",
+   "Solicitante: "+nome,
+   "Equipe: "+equipe,
+   "Local: "+local,
+   "Precisa: "+$("quando").value,
+   "",
+   "*MATERIAIS:*"
+ ];
+ ids.forEach(id=>{const m=M.find(x=>x.id==id);linhas.push("• "+qtd[id]+" "+m.u+" — "+m.n+" ("+m.cod+")")});
+ const obs=$("obs").value.trim();
+ if(obs){linhas.push("");linhas.push("Observação: "+obs)}
+ linhas.push("");linhas.push("Pedido gerado pelo Orla Almox Digital");
+ const url="https://wa.me/"+PHONE+"?text="+encodeURIComponent(linhas.join("\n"));
+ window.location.href=url;
+}
+$("busca").addEventListener("input",renderLista);
+$("enviar").addEventListener("click",enviar);
+renderCats();renderLista();renderResumo();
+</script>
+</body>
+</html>
